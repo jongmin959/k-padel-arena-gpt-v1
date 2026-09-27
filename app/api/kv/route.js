@@ -1,0 +1,6 @@
+import { NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
+const redis=Redis.fromEnv(); const MAX=5000000;
+export async function GET(req){const key=req.nextUrl.searchParams.get("key");if(!key)return NextResponse.json({error:"missing key"},{status:400});try{const value=await redis.get(key);if(value===null||value===undefined)return NextResponse.json({error:"not found"},{status:404});return NextResponse.json({key,value});}catch{return NextResponse.json({error:"storage error"},{status:500})}}
+export async function POST(req){try{const {key,value}=await req.json();if(!key||typeof value!=="string")return NextResponse.json({error:"missing key or value"},{status:400});if(value.length>MAX)return NextResponse.json({error:"value too large"},{status:413});await redis.set(key,value);return NextResponse.json({key,value});}catch{return NextResponse.json({error:"storage error"},{status:500})}}
+export async function DELETE(req){const key=req.nextUrl.searchParams.get("key");if(!key)return NextResponse.json({error:"missing key"},{status:400});try{await redis.del(key);return NextResponse.json({key,deleted:true})}catch{return NextResponse.json({error:"storage error"},{status:500})}}

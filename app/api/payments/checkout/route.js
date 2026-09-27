@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";
+export async function POST(request){const body=await request.json();if(!body.amount||!body.orderId)return NextResponse.json({error:"amount and orderId required"},{status:400});return NextResponse.json({provider:"toss",configured:Boolean(process.env.TOSS_SECRET_KEY),orderId:body.orderId,amount:body.amount,message:process.env.TOSS_SECRET_KEY?"결제 승인 API 연결 준비 완료":"TOSS_SECRET_KEY를 설정하면 실결제 승인 연결 가능"})}

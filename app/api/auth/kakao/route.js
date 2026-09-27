@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";
+export async function GET(request){const key=process.env.KAKAO_REST_API_KEY;const redirect=process.env.KAKAO_REDIRECT_URI||new URL("/api/auth/kakao/callback",request.url).toString();if(!key)return NextResponse.redirect(new URL("/?kakao=setup_required",request.url));const url=new URL("https://kauth.kakao.com/oauth/authorize");url.searchParams.set("client_id",key);url.searchParams.set("redirect_uri",redirect);url.searchParams.set("response_type","code");return NextResponse.redirect(url)}
